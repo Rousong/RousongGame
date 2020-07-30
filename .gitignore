@@ -1,0 +1,15 @@
+Library/
+Inventory/
+Logs/
+obj/
+Packages/
+Temp/
+Assembly-CSharp.csproj
+RousongGame.sln
+Unity.2D.Animation.Samples.Dependency.csproj
+Unity.2D.Animation.Samples.Editor.csproj
+Unity.2D.Animation.Samples.Runtime.csproj
+V_Animation.csproj
+.vs/RousongGame/v16/.suo
+Assets/Hero and Opponents/
+Assets/Tilemaps/Tiles/
