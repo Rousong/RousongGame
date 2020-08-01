@@ -39,5 +39,13 @@ public class CharacterData : MonoBehaviour
             isOpen = !isOpen;
             myBag.SetActive(isOpen);
         }
+        if (isOpen) //如果打开背包菜单 那么游戏暂停
+        {
+            GameManager.instance.PauseGame();
+        }
+        else //如果关闭背包菜单 那么游戏继续
+        {
+            GameManager.instance.ResumeGame();
+        }
     }
 }
