@@ -88,7 +88,7 @@ public class PlayerController : MonoBehaviour
         if (isGround)
         {
             isJump = false;
-           // rb.gravityScale = 1;
+            rb.gravityScale = 1;
         }
     }
     /// <summary>
@@ -123,7 +123,7 @@ public class PlayerController : MonoBehaviour
            // jumpFX.SetActive(true);
             //jumpFX.transform.position = transform.position + new Vector3(0, -0.45f, 0);
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-           // rb.gravityScale = 4;
+            rb.gravityScale = 4;
             canJump = false;
 
         }
