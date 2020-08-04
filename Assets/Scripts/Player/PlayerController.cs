@@ -126,6 +126,8 @@ public class PlayerController : MonoBehaviour
             rb.gravityScale = 4;
             canJump = false;
 
+            AudioManager.instance.PlayJumpAudio();
+
         }
     }
  

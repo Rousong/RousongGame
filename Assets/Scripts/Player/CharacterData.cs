@@ -7,6 +7,10 @@ using UnityEngine;
 /// </summary>
 public class CharacterData : MonoBehaviour
 {
+    public string characterName;
+
+    // public StatSystem stats;
+
     [Header("动画状态机")]
     public int state;
 
@@ -25,8 +29,12 @@ public class CharacterData : MonoBehaviour
     private void Awake()
     {
         inventory = new Inventory();
+       
     }
-
+    private void Start()
+    {
+        UIManager.instance.UpdateHeath(health);
+    }
     private void Update()
     {
         OpenMyBag();

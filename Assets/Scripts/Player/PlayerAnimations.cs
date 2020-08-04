@@ -35,4 +35,8 @@ public class PlayerAnimations : MonoBehaviour
     {
         controller.isRoll = false;
     }
+    public void StepAudio()
+    {
+        AudioManager.instance.PlayFootstepAudio();//播放随机脚步声，注意这里使用单例模式，应该使用instance来访问方法
+    }
 }
