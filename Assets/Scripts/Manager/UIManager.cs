@@ -67,15 +67,15 @@ public class UIManager : MonoBehaviour
 
     public void PauseGameAndShowMenu() //button method
     {
-        Time.timeScale = 0;
         pauseMenu.SetActive(true);
-        
+        Time.timeScale = 0f;
     }
 
     public void ResumeGameAndCloseMenu() //button method
     {
-        Time.timeScale = 0;
         pauseMenu.SetActive(false);
+        Time.timeScale = 1;
+
 
     }
 

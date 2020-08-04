@@ -9,6 +9,9 @@ public class AudioManager : MonoBehaviour
 {
     public static AudioManager instance;
 
+    [Header("混音器")]
+    public AudioMixer audioMixer;
+
     [Header("环境音效")]
     public AudioClip ambientClip;
     public AudioClip musicClip;
@@ -64,6 +67,11 @@ public class AudioManager : MonoBehaviour
         instance.musicSource.Play();
     }
 
+    public void SetVolume(float value)
+    {
+        audioMixer.SetFloat("MainVolume", value);
+    }
+
     //播放随机脚步声，注意这里使用单例模式，应该使用instance来访问方法，不要加static
     public void PlayFootstepAudio()
     {
@@ -80,18 +88,21 @@ public class AudioManager : MonoBehaviour
         instance.voiceSource.clip = instance.jumpVoiceClip;
         instance.voiceSource.Play();
     }
-
+    /// <summary>
+    /// 控制按钮开关的音效
+    /// </summary>
+    /// <param name="isOpen"></param>
     public void PlayInventoryAudio(bool isOpen)
     {
         if (isOpen)
         {
            instance.inventorySource.clip = instance.CloseInventoryClip;
-           instance.playerSource.Play();
+           instance.inventorySource.Play();
         }
         else
         {
             instance.inventorySource.clip = instance.OpenInventoryClip;
-            instance.playerSource.Play();
+            instance.inventorySource.Play();
         }
     }
 }
