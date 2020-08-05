@@ -63,12 +63,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\DragonBones\Editor\AssetProcess.cs" />
-    <Compile Include="Assets\DragonBones\Editor\DragonBonesIcons.cs" />
-    <Compile Include="Assets\DragonBones\Editor\PickJsonDataWindow.cs" />
-    <Compile Include="Assets\DragonBones\Editor\ShowSlotsWindow.cs" />
-    <Compile Include="Assets\DragonBones\Editor\UnityArmatureEditor.cs" />
-    <Compile Include="Assets\DragonBones\Editor\UnityEditor.cs" />
+    <Compile Include="Assets\Scripts\Editor\CreateScriptEditor.cs" />
+    <Compile Include="Assets\Scripts\Editor\SaveScriptState.cs" />
+    <None Include="Assets\Scripts\Editor\SampleInteractableObject.txt" />
+    <None Include="Assets\Scripts\Editor\SampleWeaponEffect.txt" />
+    <None Include="Assets\Scripts\Editor\SampleItemEffect.txt" />
+    <None Include="Assets\Scripts\Editor\SampleEquipmentEffect.txt" />
     <Reference Include="UnityEngine">
       <HintPath>G:/Unity/2019.4.1f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
@@ -633,6 +633,9 @@
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>G:/UnityProject/RousongGame/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>
+    <Reference Include="Cinemachine">
+      <HintPath>G:/UnityProject/RousongGame/Library/ScriptAssemblies/Cinemachine.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.2D.Animation.Runtime">
       <HintPath>G:/UnityProject/RousongGame/Library/ScriptAssemblies/Unity.2D.Animation.Runtime.dll</HintPath>
     </Reference>
@@ -701,6 +704,9 @@
     </Reference>
     <Reference Include="Unity.2D.Animation.Editor">
       <HintPath>G:/UnityProject/RousongGame/Library/ScriptAssemblies/Unity.2D.Animation.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="com.unity.cinemachine.editor">
+      <HintPath>G:/UnityProject/RousongGame/Library/ScriptAssemblies/com.unity.cinemachine.editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Mathematics.Editor">
       <HintPath>G:/UnityProject/RousongGame/Library/ScriptAssemblies/Unity.Mathematics.Editor.dll</HintPath>
