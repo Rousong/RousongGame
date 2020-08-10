@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour
     public bool isGround;
     public bool isJump;
     public bool canJump;
-    public bool isRoll;
+    public bool isDash;
     public bool canRoll;
 
     private void Awake()
@@ -74,7 +74,7 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()//每秒执行50次
     {
         PhysicsCheck();
-        if (!isRoll)
+        if (!isDash)
         {
             Movement();
         }
@@ -135,7 +135,7 @@ public class PlayerController : MonoBehaviour
     {
             if (rb.velocity.x > 0) 
             {
-                isRoll = true;
+                isDash = true;
                 anim.Play("roll");
                 Debug.Log("duo shan 1");
                 rb.velocity = new Vector2(rollForce, 1);
@@ -143,7 +143,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (rb.velocity.x < 0)
         {
-            isRoll = true;
+            isDash = true;
             anim.Play("roll");
             Debug.Log("duo shan 2");
             rb.velocity = new Vector2(-rollForce, 1);

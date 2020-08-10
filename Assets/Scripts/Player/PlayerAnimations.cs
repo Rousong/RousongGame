@@ -27,13 +27,13 @@ public class PlayerAnimations : MonoBehaviour
         anim.SetFloat("velocityY", rb.velocity.y);
         anim.SetBool("jump", controller.isJump);
         anim.SetBool("ground", controller.isGround);
-        anim.SetBool("roll", controller.isRoll);
+        anim.SetBool("dash", controller.isDash);
         anim.SetInteger("state", player.state);
     }
 
     void stopRolling()
     {
-        controller.isRoll = false;
+        controller.isDash = false;
     }
     public void StepAudio()
     {
