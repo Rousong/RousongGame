@@ -25,15 +25,15 @@ public class PlayerAnimations : MonoBehaviour
     {
         anim.SetFloat("speed", math.abs(rb.velocity.x));
         anim.SetFloat("velocityY", rb.velocity.y);
-        anim.SetBool("jump", controller.isJump);
-        anim.SetBool("ground", controller.isGround);
-        anim.SetBool("dash", controller.isDash);
+        anim.SetBool("jump", controller.isJumping);
+        anim.SetBool("ground", controller.isOnGround);
+        anim.SetBool("dash", controller.isDashing);
         anim.SetInteger("state", player.state);
     }
 
     void stopRolling()
     {
-        controller.isDash = false;
+        controller.isDashing = false;
     }
     public void StepAudio()
     {
