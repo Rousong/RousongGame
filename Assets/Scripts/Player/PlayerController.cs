@@ -23,16 +23,13 @@ public class PlayerController : MonoBehaviour
     public float speed;
     public float jumpForce;
     public float rollForce;
-    public float xVolocity;
+    public float xVolocity; //test ===================================
+    public float yVolocity; //test ===================================
+    public float playerGravity; //test ===================================
 
-    public bool canDoubleJump = true; //If player can double jump
-    [SerializeField] private float m_DashForce = 25f;
+    [SerializeField] private float dashForce = 25f;
     private float limitFallSpeed = 25f; // Limit fall speed
 
-    private float prevVelocityX = 0f;
-    private float jumpWallStartX = 0;
-    private float jumpWallDistX = 0; //Distance between player and wall
-    private bool limitVelOnWallJump = false; //For limit wall jump distance with low fps
 
     [Header("物理碰撞检测")]
     public Transform groundCheck; // 用来检测地面
@@ -46,14 +43,25 @@ public class PlayerController : MonoBehaviour
     public bool isWall;
     private bool facingRight = true;  // For determining which way the player is currently facing.
 
-    private bool jump;
+    [Header("跳跃相关")]
     public bool isJumping;
     public bool canJump;
+    public bool canDoubleJump = true; //If player can double jump
+
+    [Header("冲刺相关")]
     private bool dash;
     public bool isDashing;
     public bool canDash = true;
+
+    [Header("贴墙跳相关")]
     public bool isWallSliding;
     public bool oldWallSlidding;
+    public float prevVelocityX = 0f;
+    public bool canCheck = false; //For check if player is wallsliding
+    public float jumpWallStartX = 0;
+    public float jumpWallDistX = 0; //Distance between player and wall
+    public bool limitVelOnWallJump = false; //For limit wall jump distance with low fps
+
 
     [Header("事件")]
     [Space]
@@ -85,14 +93,16 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         CheckInput();
-        xVolocity = rb.velocity.x;
+        xVolocity = rb.velocity.x; //test ------------------------------------------------------------
+        yVolocity = rb.velocity.y; //test ------------------------------------------------------------
+        playerGravity = rb.gravityScale; //test ------------------------------------------------------------
     }
     void CheckInput()
     {
         //float horizontalInput = Input.GetAxis("Horizontal");  这样是-1 到1 包含小数
          horizontalInput = Input.GetAxisRaw("Horizontal");// GetAxisRaw 是整数 一般平台跳跃游戏不需要精准的移动速度
 
-        if (Input.GetAxis("Jump")>0 && isOnGround)
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             canJump = true;
         }
@@ -115,9 +125,10 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()//每秒执行50次
     {
         PhysicsCheck();
-        Movement(horizontalInput,jump,dash);
+        Movement(horizontalInput,dash);
         Jump();
         dash = false;
+        canJump = false;
     }
     /// <summary>
     /// 检测玩家的物理碰撞
@@ -128,13 +139,35 @@ public class PlayerController : MonoBehaviour
         isOnGround = false;
 
         // 检测玩家是否在地面上
-        isOnGround = Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
-        if (isOnGround)
-        {
-            isJumping = false;
-            rb.gravityScale = 1;
-        }
+        /*
+         isOnGround = Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
+         if (isOnGround)
+         {
+             isJumping = false;
+             rb.gravityScale = 1;
+         }
+        */
 
+        // 检测玩家是否在地面上
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(groundCheck.position, checkRadius, groundLayer);
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            // 如果玩家在地面上
+            if (colliders[i].gameObject != gameObject)
+                isOnGround = true;
+                isJumping = false;
+                rb.gravityScale = 1; //重力设为1
+            if (!wasGrounded)
+            {
+                OnLandEvent.Invoke();
+                if (!isWall && !isDashing) //如果玩家没有在墙上 也没有在冲刺状态
+                    // particleJumpDown.Play();
+                canDoubleJump = true; //可以二段跳
+                if (rb.velocity.y < 0f)
+                    limitVelOnWallJump = false; //如果下落的加速度是0， 那么玩家不可以贴墙跳
+            }
+        }
+    
         // 检测玩家是否贴墙
         isWall = false;
         if (!isOnGround)
@@ -151,7 +184,31 @@ public class PlayerController : MonoBehaviour
             }
             prevVelocityX = rb.velocity.x;
         }
-
+        if (limitVelOnWallJump)
+        {
+            if (rb.velocity.y < -0.5f)
+                limitVelOnWallJump = false;
+            jumpWallDistX = (jumpWallStartX - transform.position.x) * transform.localScale.x;
+            if (jumpWallDistX < -0.5f && jumpWallDistX > -1f)
+            {
+                canMove = true;
+            }
+            else if (jumpWallDistX < -1f && jumpWallDistX >= -2f)
+            {
+                canMove = true;
+                rb.velocity = new Vector2(10f * transform.localScale.x, rb.velocity.y);
+            }
+            else if (jumpWallDistX < -2f)
+            {
+                limitVelOnWallJump = false;
+                rb.velocity = new Vector2(0, rb.velocity.y);
+            }
+            else if (jumpWallDistX > 0)
+            {
+                limitVelOnWallJump = false;
+                rb.velocity = new Vector2(0, rb.velocity.y);
+            }
+        }
     }
     /// <summary>
     /// 可以画出PhysicsCheck()的检测范围
@@ -175,7 +232,7 @@ public class PlayerController : MonoBehaviour
         transform.localScale = theScale;
     }
 
-    void Movement(float horizontalInput, bool jump, bool dash)
+    void Movement(float horizontalInput, bool dash)
     {
         if (canMove)
         {
@@ -193,7 +250,7 @@ public class PlayerController : MonoBehaviour
             }
             if (isDashing)
             {
-                rb.velocity = new Vector2(transform.localScale.x * m_DashForce, 0);
+                rb.velocity = new Vector2(transform.localScale.x * dashForce, 0);
                 audioEffectPlayer.Play(CharacterAudio.AudioType.Dash, true);
             }
 
@@ -202,18 +259,27 @@ public class PlayerController : MonoBehaviour
 
     void Jump()
     {
-        if (canJump)
+        // 如果玩家在地面上and可以跳起的状态
+        if (isOnGround &&  canJump  )
         {
             isJumping = true;
-           // jumpFX.SetActive(true);
+            // jumpFX.SetActive(true);
             //jumpFX.transform.position = transform.position + new Vector3(0, -0.45f, 0);
+            isOnGround = false;
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             rb.gravityScale = 4;
-            canJump = false;
+            // canJump = false;
 
             // AudioManager.instance.PlayJumpAudio();
             audioEffectPlayer.Play(CharacterAudio.AudioType.Jump, true);
-
+        }
+        // 如果玩家处于不在地面但是可以跳起而且可以2段跳，并且不在贴墙的状态下
+        else if (!isOnGround && canJump && canDoubleJump && !isWallSliding)
+        {
+            canDoubleJump = false;
+            rb.velocity = new Vector2(rb.velocity.x, 0);
+            rb.AddForce(new Vector2(0f, jumpForce*50));
+            audioEffectPlayer.Play(CharacterAudio.AudioType.Jump, true);
         }
     }
  
