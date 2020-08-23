@@ -1,0 +1,167 @@
+
+skeleton.png
+size: 269,269
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+右手1
+  rotate: true
+  xy: 114, 15
+  size: 24, 38
+  orig: 24, 38
+  offset: 0, 0
+  index: -1
+右手2
+  rotate: true
+  xy: 154, 15
+  size: 27, 46
+  orig: 27, 46
+  offset: 0, 0
+  index: -1
+右腿1
+  rotate: true
+  xy: 244, 239
+  size: 28, 17
+  orig: 28, 17
+  offset: 0, 0
+  index: -1
+右腿2
+  rotate: false
+  xy: 64, 4
+  size: 24, 16
+  orig: 24, 16
+  offset: 0, 0
+  index: -1
+右腿3
+  rotate: true
+  xy: 33, 4
+  size: 16, 29
+  orig: 16, 29
+  offset: 0, 0
+  index: -1
+嘴巴
+  rotate: false
+  xy: 90, 10
+  size: 13, 10
+  orig: 13, 10
+  offset: 0, 0
+  index: -1
+嘴巴1
+  rotate: false
+  xy: 90, 2
+  size: 9, 6
+  orig: 9, 6
+  offset: 0, 0
+  index: -1
+图层_164
+  rotate: true
+  xy: 154, 67
+  size: 54, 51
+  orig: 54, 51
+  offset: 0, 0
+  index: -1
+头
+  rotate: false
+  xy: 2, 22
+  size: 110, 99
+  orig: 111, 100
+  offset: 1, 0
+  index: -1
+头套
+  rotate: false
+  xy: 2, 123
+  size: 169, 144
+  orig: 170, 145
+  offset: 1, 0
+  index: -1
+头套 - 副本
+  rotate: false
+  xy: 173, 218
+  size: 69, 49
+  orig: 70, 49
+  offset: 0, 0
+  index: -1
+头套 - 副本 (2)
+  rotate: false
+  xy: 203, 151
+  size: 43, 65
+  orig: 43, 66
+  offset: 0, 0
+  index: -1
+头套2
+  rotate: false
+  xy: 173, 135
+  size: 28, 81
+  orig: 28, 81
+  offset: 0, 0
+  index: -1
+尾巴
+  rotate: true
+  xy: 114, 41
+  size: 80, 38
+  orig: 80, 38
+  offset: 0, 0
+  index: -1
+左手1
+  rotate: false
+  xy: 239, 114
+  size: 24, 35
+  orig: 25, 35
+  offset: 0, 0
+  index: -1
+左手2
+  rotate: false
+  xy: 207, 107
+  size: 30, 42
+  orig: 30, 42
+  offset: 0, 0
+  index: -1
+左腿3
+  rotate: true
+  xy: 2, 2
+  size: 18, 29
+  orig: 18, 29
+  offset: 0, 0
+  index: -1
+盆骨
+  rotate: false
+  xy: 154, 44
+  size: 50, 21
+  orig: 51, 21
+  offset: 1, 0
+  index: -1
+眉毛1
+  rotate: false
+  xy: 173, 123
+  size: 31, 10
+  orig: 31, 10
+  offset: 0, 0
+  index: -1
+眉毛2
+  rotate: true
+  xy: 244, 218
+  size: 19, 12
+  orig: 19, 12
+  offset: 0, 0
+  index: -1
+眼睛1
+  rotate: false
+  xy: 105, 6
+  size: 7, 14
+  orig: 7, 14
+  offset: 0, 0
+  index: -1
+眼睛2
+  rotate: false
+  xy: 105, 6
+  size: 7, 14
+  orig: 7, 14
+  offset: 0, 0
+  index: -1
+背包
+  rotate: false
+  xy: 207, 60
+  size: 27, 45
+  orig: 27, 45
+  offset: 0, 0
+  index: -1

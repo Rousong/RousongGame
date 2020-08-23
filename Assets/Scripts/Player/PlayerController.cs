@@ -19,10 +19,13 @@ public class PlayerController : MonoBehaviour
     [Header("玩家移动参数")]
     float horizontalInput;
     public bool canMove = true; // 玩家是否可以移动
-    public bool airControl = false; // 玩家在跳跃时是否可以转向
+    public bool airControl = false; // 玩家在空中时是否可以转向
     public float speed;
     public float jumpForce;
     public float rollForce;
+    private Vector3 velocity = Vector3.zero;
+    [Range(0, .3f)] 
+    public float m_MovementSmoothing = .05f;  // 多少可以使运动平滑
     public float xVolocity; //test ===================================
     public float yVolocity; //test ===================================
     public float playerGravity; //test ===================================
@@ -100,7 +103,7 @@ public class PlayerController : MonoBehaviour
     void CheckInput()
     {
         //float horizontalInput = Input.GetAxis("Horizontal");  这样是-1 到1 包含小数
-         horizontalInput = Input.GetAxisRaw("Horizontal");// GetAxisRaw 是整数 一般平台跳跃游戏不需要精准的移动速度
+         horizontalInput = Input.GetAxisRaw("Horizontal") * speed;// GetAxisRaw 是整数 一般平台跳跃游戏不需要精准的移动速度
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -186,19 +189,20 @@ public class PlayerController : MonoBehaviour
         }
         if (limitVelOnWallJump)
         {
+            Debug.Log("ここに入った！！！！");
             if (rb.velocity.y < -0.5f)
                 limitVelOnWallJump = false;
             jumpWallDistX = (jumpWallStartX - transform.position.x) * transform.localScale.x;
-            if (jumpWallDistX < -0.5f && jumpWallDistX > -1f)
+            if (jumpWallDistX < -5f && jumpWallDistX > -10f)
             {
                 canMove = true;
             }
-            else if (jumpWallDistX < -1f && jumpWallDistX >= -2f)
+            else if (jumpWallDistX < -10f && jumpWallDistX >= -20f)
             {
                 canMove = true;
-                rb.velocity = new Vector2(10f * transform.localScale.x, rb.velocity.y);
+                rb.velocity = new Vector2(100f * transform.localScale.x, rb.velocity.y);
             }
-            else if (jumpWallDistX < -2f)
+            else if (jumpWallDistX < -20f)
             {
                 limitVelOnWallJump = false;
                 rb.velocity = new Vector2(0, rb.velocity.y);
@@ -236,13 +240,13 @@ public class PlayerController : MonoBehaviour
     {
         if (canMove)
         {
-            rb.velocity = new Vector2(horizontalInput * speed, rb.velocity.y);
+            // rb.velocity = new Vector2(horizontalInput * speed, rb.velocity.y);
 
-            // 实现贴图的x轴翻转
-            if (horizontalInput != 0)
-            {
-                transform.localScale = new Vector3(horizontalInput, 1, 1);
-            }
+            // 实现贴图的x轴翻转 ※现在 因为horizontalInput会在update里面乘以速度，所以反转的方法单独设立 Flip（）
+            // if (horizontalInput != 0)
+            // {
+            //    transform.localScale = new Vector3(horizontalInput, 1, 1);
+            //}
             if (dash && canDash && !isWallSliding)
             {
                 //m_Rigidbody2D.AddForce(new Vector2(transform.localScale.x * m_DashForce, 0f));
@@ -253,7 +257,28 @@ public class PlayerController : MonoBehaviour
                 rb.velocity = new Vector2(transform.localScale.x * dashForce, 0);
                 audioEffectPlayer.Play(CharacterAudio.AudioType.Dash, true);
             }
-
+            else if (isOnGround || airControl)
+            {
+                if (rb.velocity.y < -limitFallSpeed) {
+                    rb.velocity = new Vector2(rb.velocity.x, -limitFallSpeed);
+                }
+                // Move the character by finding the target velocity
+                Vector3 targetVelocity = new Vector2(horizontalInput, rb.velocity.y);
+                // And then smoothing it out and applying it to the character
+                rb.velocity = Vector3.SmoothDamp(rb.velocity, targetVelocity, ref velocity, m_MovementSmoothing);
+                // If the input is moving the player right and the player is facing left...
+                if (horizontalInput > 0 && !facingRight && !isWallSliding)
+                {
+                    // ... flip the player.
+                    Flip();
+                }
+                // Otherwise if the input is moving the player left and the player is facing right...
+                else if (horizontalInput < 0 && facingRight && !isWallSliding)
+                {
+                    // ... flip the player.
+                    Flip();
+                }
+            }
         }
     }
 
@@ -280,6 +305,65 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, 0);
             rb.AddForce(new Vector2(0f, jumpForce*50));
             audioEffectPlayer.Play(CharacterAudio.AudioType.Jump, true);
+        }
+        //  如果碰撞检测：在墙上 and 不在地面
+        else if (isWall && !isOnGround)
+        {
+            if (!oldWallSlidding && rb.velocity.y <0 || isDashing)
+            {
+                isWallSliding = true;
+                wallCheck.localPosition = new Vector3(-wallCheck.localPosition.x,wallCheck.localPosition.y,0);
+                Flip();
+                StartCoroutine(WaitToCheck(0.1f));
+                canDoubleJump = true;
+            }
+            isDashing = false;
+            if (isWallSliding)
+            {
+                if (horizontalInput * transform.localScale.x > 0.1f)
+                {
+                    StartCoroutine(WaitToEndSliding());
+                }
+                else
+                {
+                    oldWallSlidding = true;
+                    rb.velocity = new Vector2(-transform.localScale.x * 2, -10);
+                }
+            }
+            if (canJump && isWallSliding)
+            {
+                anim.SetBool("jump", true);
+                //anim.SetBool("JumpUp", true);
+                rb.velocity = new Vector2(0f, 0f);
+                rb.AddForce(new Vector2(transform.localScale.x * jumpForce*100f, jumpForce*60f));
+                jumpWallStartX = transform.position.x;
+                limitVelOnWallJump = true;
+                canDoubleJump = true;
+                isWallSliding = false;
+                anim.SetBool("isWallSliding", false);
+                oldWallSlidding = false;
+                wallCheck.localPosition = new Vector3(Mathf.Abs(wallCheck.localPosition.x), wallCheck.localPosition.y, 0);
+                canMove = false;
+                Debug.Log("limitVelOnWallJumpはTureに設定した");
+            }
+            else if (dash && canDash)
+            {
+                isWallSliding = false;
+                anim.SetBool("isWallSliding", false);
+                oldWallSlidding = false;
+                wallCheck.localPosition = new Vector3(Mathf.Abs(wallCheck.localPosition.x), wallCheck.localPosition.y, 0);
+                canDoubleJump = true;
+                StartCoroutine(DashCooldown());
+            }
+        }
+
+        else if (isWallSliding && !isWall && canCheck)
+        {
+            isWallSliding = false;
+            anim.SetBool("isWallSliding", false);
+            oldWallSlidding = false;
+            wallCheck.localPosition = new Vector3(Mathf.Abs(wallCheck.localPosition.x), wallCheck.localPosition.y, 0);
+            canDoubleJump = true;
         }
     }
  
@@ -311,5 +395,20 @@ public class PlayerController : MonoBehaviour
         isDashing = false;
         yield return new WaitForSeconds(0.5f);
         canDash = true;
+    }
+    IEnumerator WaitToCheck(float time)
+    {
+        canCheck = false;
+        yield return new WaitForSeconds(time);
+        canCheck = true;
+    }
+    IEnumerator WaitToEndSliding()
+    {
+        yield return new WaitForSeconds(0.1f);
+        canDoubleJump = true;
+        isWallSliding = false;
+        anim.SetBool("IsWallSliding", false);
+        oldWallSlidding = false;
+        wallCheck.localPosition = new Vector3(Mathf.Abs(wallCheck.localPosition.x), wallCheck.localPosition.y, 0);
     }
 }

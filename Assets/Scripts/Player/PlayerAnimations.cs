@@ -29,6 +29,7 @@ public class PlayerAnimations : MonoBehaviour
         anim.SetBool("ground", controller.isOnGround);
         anim.SetBool("dash", controller.isDashing);
         anim.SetInteger("state", player.state);
+        anim.SetBool("isWallSliding", controller.isWallSliding);
     }
 
     void stopRolling()
